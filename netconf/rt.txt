@@ -1,0 +1,308 @@
+!
+! Last configuration change at 10:30:56 JST Thu Sep 14 2017 by rk
+!
+version 15.0
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname rt-01
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 100000
+no logging console
+enable secret 5 
+!
+no aaa new-model
+!
+!
+!
+clock timezone JST 9
+!
+ipv6 unicast-routing
+ipv6 dhcp pool dhcpv6-stateless
+!
+ipv6 cef
+ip source-route
+ip cef
+!
+!
+!
+!
+ip domain name venue.l.SERVICE-DOMAIN
+ip name-server 10.24.128.2
+no ip igmp snooping
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+license udi pid CISCO2921/K9 sn 
+license accept end user agreement
+license boot module c2900 technology-package securityk9
+license boot module c2900 technology-package datak9
+!
+!
+vtp mode transparent
+username rk privilege 15 password 
+username root privilege 15 password 
+!
+redundancy
+!
+!
+ip ssh authentication-retries 5
+ip ssh version 2
+!
+crypto keyring vpn-keyring
+  pre-shared-key address ... key 
+  pre-shared-key hostname gw-01.cloud.i.SERVICE-DOMAIN key 
+!
+crypto isakmp policy 100
+ encr aes
+ authentication pre-share
+ group 14
+ lifetime 21600
+crypto isakmp identity hostname
+crypto isakmp nat keepalive 300
+crypto isakmp profile vpn-ike-profile
+   keyring vpn-keyring
+   self-identity fqdn rt-01.venue.l.SERVICE-DOMAIN
+   match identity address ... 255.255.255.255
+   match identity host gw-01.cloud.i.SERVICE-DOMAIN
+   initiate mode aggressive
+!
+crypto ipsec security-association replay disable
+!
+crypto ipsec transform-set vpn-xfrm esp-aes esp-sha-hmac
+crypto ipsec df-bit clear
+!
+crypto ipsec profile vpn-profile
+ set transform-set vpn-xfrm
+ set pfs group14
+ set isakmp-profile vpn-ike-profile
+!
+!
+!
+!
+!
+!
+interface Tunnel0
+ ip address 169.254.24.2 255.255.255.252
+ ip virtual-reassembly
+ ip tcp adjust-mss 1314
+ tunnel source 192.50.220.169
+ tunnel mode ipsec ipv4
+ tunnel destination 59.106.211.253
+ tunnel protection ipsec profile vpn-profile
+ !
+!
+interface Tunnel1
+ no ip address
+ !
+!
+!
+interface GigabitEthernet0/0
+ duplex auto
+ speed auto
+ pppoe enable group global
+ pppoe-client dial-pool-number 2
+ pppoe-client dial-pool-number 1
+ !
+!
+interface GigabitEthernet0/1
+ description mgmt
+ ip address 10.24.0.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly
+ duplex auto
+ speed auto
+ !
+!
+interface GigabitEthernet0/1.2
+ description global
+ encapsulation dot1Q 2
+ ip address 192.50.220.169 255.255.255.248
+!
+interface GigabitEthernet0/1.10
+ description srv
+ encapsulation dot1Q 10
+ ip address 10.24.10.254 255.255.255.0
+ ip helper-address 10.24.128.3
+ ip nat inside
+ ip virtual-reassembly
+ ipv6 address FE80::1 link-local
+ ipv6 address ...
+!
+interface GigabitEthernet0/1.11
+ description wifi
+ encapsulation dot1Q 11
+ ip address 10.24.11.254 255.255.255.0
+ ip helper-address 10.24.128.3
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.100
+ description adm
+ encapsulation dot1Q 100
+ ip address 10.24.100.254 255.255.255.0
+ ip helper-address 10.24.128.3
+ ip nat inside
+ ip virtual-reassembly
+!
+interface GigabitEthernet0/1.112
+ description user
+ encapsulation dot1Q 112
+ ip address 10.24.127.254 255.255.240.0
+ ip access-group acl-user-in in
+ ip helper-address 10.24.128.3
+ ip nat inside
+ ip virtual-reassembly
+ ipv6 address FE80::1 link-local
+ ipv6 address ...
+ ipv6 enable
+ ipv6 traffic-filter v6-user-in in
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ !
+!
+interface Dialer0
+ description pppoe-v4
+ mtu 1454
+ no ip address
+ ip access-group acl-global-in in
+ ip nat outside
+ ip virtual-reassembly
+ encapsulation ppp
+ ip route-cache policy
+ ip tcp adjust-mss 1414
+ shutdown
+ dialer pool 1
+ dialer-group 1
+ ppp mtu adaptive
+ ppp authentication chap callin
+ ppp chap hostname ...
+ ppp chap password ...
+ !
+!
+interface Dialer1
+ description pppoe-v6
+ mtu 1454
+ no ip address
+ encapsulation ppp
+ shutdown
+ dialer pool 2
+ dialer-group 2
+ ipv6 address autoconfig
+ ipv6 enable
+ ipv6 mtu 1400
+ no ipv6 nd ra suppress
+ ipv6 dhcp client pd v6pd
+ ipv6 traffic-filter v6-global-in in
+ ipv6 traffic-filter v6-global-out out
+ ppp authentication chap callin
+ ppp chap hostname ...
+ ppp chap password ...
+ !
+!
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+ip nat log translations syslog
+ip nat translation timeout 600
+ip nat translation tcp-timeout 600
+ip nat translation udp-timeout 600
+ip nat translation finrst-timeout 15
+ip nat translation syn-timeout 30
+ip nat translation dns-timeout 15
+ip nat translation routemap-entry-timeout 15
+ip nat translation icmp-timeout 10
+ip nat translation max-entries 195000
+ip nat translation max-entries all-host 200
+ip nat translation arp-ping-timeout 10
+ip nat pool napt-pool ... ... netmask 255.255.255.248
+ip nat inside source list acl-napt pool napt-pool overload
+ip route 10.24.128.0 255.255.128.0 169.254.24.1
+!
+ip access-list standard acl-snmp
+ permit 10.24.128.0 0.0.127.255
+ permit 10.24.0.0 0.0.0.255
+!
+ip access-list extended acl-global-in
+ permit icmp any any
+ permit udp any eq domain any
+ permit udp any any eq 1701
+ permit udp any any eq non500-isakmp
+ permit udp any any eq isakmp
+ permit esp any any
+ permit gre any any
+ deny   ip any any
+ip access-list extended acl-napt
+ permit ip 10.24.0.0 0.0.127.255 any
+ip access-list extended acl-ssh
+ permit ip 10.24.128.0 0.0.127.255 any
+ permit ip 10.24.0.0 0.0.0.255 any
+ deny   ip any any
+ip access-list extended acl-user-in
+ permit tcp any any established
+ deny   ip any 10.24.0.0 0.0.0.255
+ deny   ip any 10.24.11.0 0.0.0.255
+ deny   tcp any 10.24.10.0 0.0.0.255 eq 22
+ deny   tcp any 10.24.10.0 0.0.0.255 eq 22
+ permit ip any any
+!
+logging source-interface GigabitEthernet0/1
+logging 10.24.128.5
+!
+!
+!
+!
+!
+snmp-server community rnuDtt9nfy7g RO acl-snmp
+ipv6 access-list log-update threshold 0
+!
+ipv6 access-list v6-global-in
+ sequence 1000 permit icmp any any
+ sequence 10000 permit udp any any range 546 547
+ sequence 90000 deny ipv6 any any
+!
+ipv6 access-list v6-global-out
+ sequence 90000 permit tcp any any syn log
+ sequence 91000 permit ipv6 any any
+!
+ipv6 access-list v6-user-in
+ sequence 1000 permit tcp any any established
+ sequence 90000 permit ipv6 any any
+!
+control-plane
+ !
+!
+!
+line con 0
+ login local
+line aux 0
+line vty 0 4
+ privilege level 15
+ login local
+line vty 5 15
+ access-class acl-ssh in
+ privilege level 15
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+ntp server 216.239.35.0
+ntp server 216.239.35.4
+ntp server 216.239.35.8
+ntp server 216.239.35.12
+end
+

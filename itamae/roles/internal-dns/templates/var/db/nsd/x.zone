@@ -1,0 +1,16 @@
+$TTL 60
+$ORIGIN <%= @zone %>
+
+@ IN SOA dns.s.<%= node.fetch(:site_domain) %>. root.<%= node.fetch(:site_domain) %> (
+  <%= @serial %>  ; Serial
+  3600  ; Refresh
+  1800  ; Retry
+  2419200  ; Expire
+  60 ; Negative Cache TTL
+)
+
+@ NS dns.s.<%= node.fetch(:site_domain) %>.
+
+dns CNAME dns-01.cloud.l.<%= node.fetch(:site_domain) %>.
+rproxy CNAME gw-01.cloud.l.<%= node.fetch(:site_domain) %>.
+debug-edge CNAME debug-edge-01.venue.l.<%= node.fetch(:site_domain) %>.

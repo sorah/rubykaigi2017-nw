@@ -1,0 +1,28 @@
+#!/bin/bash -x
+
+<%- node[:cloud_router][:mgmt_prefixes][:v6].each do |prefix| -%>
+ip -6 rule add from <%= prefix %> table mgmt
+ip -6 rule add to <%= prefix %> table mgmt
+<%- end -%>
+
+<%- node[:cloud_router][:mgmt_prefixes][:v4].each do |prefix| -%>
+ip rule add from <%= prefix %> table mgmt
+ip rule add to <%= prefix %> table mgmt
+<%- end -%>
+
+sleep 15
+
+<%- node[:cloud_router][:mgmt_routes][:v6].each do |route| -%>
+<%- if route[:via] -%>
+ip -6 route add <%= route[:destination] %> via <%= route[:via] %> dev <%= route[:dev] %> src <%= route[:src] %> table mgmt
+<%- else -%>
+ip -6 route add <%= route[:destination] %> dev <%= route[:dev] %> <% if route[:src] %> src <%= route[:src] %><% end %> table mgmt
+<%- end -%>
+<%- end -%>
+<%- node[:cloud_router][:mgmt_routes][:v4].each do |route| -%>
+<%- if route[:via] -%>
+ip route add <%= route[:destination] %> via <%= route[:via] %> dev <%= route[:dev] %> src <%= route[:src] %> table mgmt
+<%- else -%>
+ip route add <%= route[:destination] %> dev <%= route[:dev] %> <% if route[:src] %> src <%= route[:src] %><% end %> table mgmt
+<%- end -%>
+<%- end -%>

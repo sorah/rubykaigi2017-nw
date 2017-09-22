@@ -1,0 +1,9 @@
+gw-01.cloud.i.nw.rubykaigi.org:
+  properties:
+    attributes:
+      desired_hostname: gw-01
+    run_list:
+      - hosts/gw-01.rb
+      - roles/base/default.rb
+      - roles/cloud-router/default.rb
+      - roles/rproxy/default.rb

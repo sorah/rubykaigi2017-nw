@@ -1,0 +1,22 @@
+$TTL 60
+$ORIGIN <%= @zone %>
+
+@ IN SOA dns.s.<%= node.fetch(:site_domain) %>. root.<%= node.fetch(:site_domain) %> (
+  <%= @serial %>  ; Serial
+  3600  ; Refresh
+  1800  ; Retry
+  2419200  ; Expire
+  60 ; Negative Cache TTL
+)
+
+CISCO-CAPWAP-CONTROLLER.venue CNAME wlc-01.cloud.l.<%= node.fetch(:site_domain) %>.
+
+@ NS dns.s.<%= node.fetch(:site_domain) %>.
+
+<%- @hosts.each do |host| -%>
+<%- if host[:iface] -%>
+<%= host[:iface] %>.<%= host[:name] %>.<%= host[:dc] %> A <%= host[:ip] %>
+<%- else-%>
+<%= host[:name] %>.<%= host[:dc] %> A <%= host[:ip] %>
+<%- end -%>
+<%- end -%>

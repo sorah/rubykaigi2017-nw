@@ -1,0 +1,8 @@
+dhcp-01.cloud.l.nw.rubykaigi.org:
+  properties:
+    attributes:
+      desired_hostname: dhcp-01
+
+    run_list:
+      - roles/base/default.rb
+      - roles/dhcp/default.rb

@@ -1,0 +1,13 @@
+dns-cache-01.venue.l.nw.rubykaigi.org:
+  properties:
+    # ssh_options:
+    #   host_name: 10.24.128.2
+    attributes:
+      desired_hostname: dns-cache-01
+      dns_cache:
+        log_queries: true
+
+    run_list:
+      - roles/base/default.rb
+      - roles/internal-dns/default.rb
+      - roles/dns-cache/default.rb

@@ -1,0 +1,18 @@
+dns-01.cloud.l.nw.rubykaigi.org:
+  properties:
+    # ssh_options:
+    #   host_name: 10.24.128.2
+    attributes:
+      desired_hostname: dns-01
+      dns_cache:
+        interfaces:
+          - 127.0.0.1
+          - '::1'
+          - 10.24.128.2
+        log_queries: true
+
+    run_list:
+      - roles/base/default.rb
+      - cookbooks/nftables/default.rb
+      - roles/internal-dns/default.rb
+      - roles/dns-cache/default.rb

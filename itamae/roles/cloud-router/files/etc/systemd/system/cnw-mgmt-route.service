@@ -1,0 +1,14 @@
+# vim: ft=systemd
+[Unit]
+Description=cnw: Set up iproute2 "mgmt" route table and ip-rules
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/cnw-setup-mgmt-route
+ExecStop=/sbin/ip route flush table mgmt
+ExecStop=/sbin/ip -6 route flush table mgmt
+
+[Install]
+WantedBy=multi-user.target

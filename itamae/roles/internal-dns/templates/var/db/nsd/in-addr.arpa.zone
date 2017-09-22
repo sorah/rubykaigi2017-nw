@@ -1,0 +1,22 @@
+$TTL 60
+$ORIGIN <%= @zone %>
+
+@ IN SOA dns.s.<%= node.fetch(:site_domain) %>. root.<%= node.fetch(:site_domain) %> (
+  <%= @serial %>  ; Serial
+  3600  ; Refresh
+  1800  ; Retry
+  2419200  ; Expire
+  60 ; Negative Cache TTL
+)
+
+@ NS dns.s.<%= node.fetch(:site_domain) %>.
+
+<%- @hosts.each do |host| -%>
+<%- rip = host[:ip].split(?.).reverse[0, 2].join(?.) -%>
+<%- if host[:iface] -%>
+<%= rip %> PTR <%= host[:iface] %>.<%= host[:name] %>.<%= host[:dc] %>.l.<%= node.fetch(:site_domain) %>.
+<%- else-%>
+<%= rip %> PTR <%= host[:name] %>.<%= host[:dc] %>.l.<%= node.fetch(:site_domain) %>.
+<%- end -%>
+<%- end -%>
+

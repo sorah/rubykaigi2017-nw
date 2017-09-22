@@ -1,0 +1,8 @@
+syslog-01.cloud.l.nw.rubykaigi.org:
+  properties:
+    attributes:
+      desired_hostname: syslog-01
+
+    run_list:
+      - roles/base/default.rb
+      - roles/syslog/default.rb

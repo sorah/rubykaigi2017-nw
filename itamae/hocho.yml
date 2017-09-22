@@ -1,0 +1,30 @@
+inventory_providers:
+  file:
+    path: './hosts'
+property_providers:
+  - add_default:
+      properties:
+        nopasswd_sudo: true
+        preferred_driver: mitamae
+initializers:
+  - site.rb
+driver_options:
+  mitamae:
+    mitamae_outdate_check_script: |
+      [ -x /usr/bin/mitamae ] && [ "_$(mitamae version)" != "_MItamae v1.5.1" ]
+    mitamae_prepare_script: # :ritona-w:
+      - |
+        set -x
+        set -e
+        if ! grep -q aur-eagletmt /etc/pacman.conf; then
+          curl https://wanko.cc/gpg-key.txt | pacman-key -a -
+          pacman-key --lsign-key C48DBD97
+          echo >> /etc/pacman.conf
+          echo "[aur-eagletmt]" >> /etc/pacman.conf
+          echo "SigLevel = Required" >> /etc/pacman.conf
+          echo 'Server = http://arch.wanko.cc/$repo/os/$arch' >> /etc/pacman.conf
+        fi
+        pacman -Syy
+        pacman -Sy
+        pacman -Su --noconfirm mitamae
+

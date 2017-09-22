@@ -1,0 +1,10 @@
+debug-edge-01.venue.l.nw.rubykaigi.org:
+  properties:
+    # ssh_options:
+    #   host_name: 10.24.128.2
+    attributes:
+      desired_hostname: debug-edge-01
+
+    run_list:
+      - roles/base/default.rb
+      - roles/debug-edge/default.rb

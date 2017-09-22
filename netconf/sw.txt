@@ -1,0 +1,470 @@
+## Last commit: 2017-09-12 21:31:48 JST by rk
+version 14.1X53-D44.3;
+system {
+    host-name sw-01;
+    domain-name venue.l.SERVICE-DOMAIN;
+    time-zone Asia/Tokyo;
+    root-authentication {
+        encrypted-password ""; ## SECRET-DATA
+    }
+    name-server {
+        10.24.128.2;
+    }
+    login {
+        user rk {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password ""; ## SECRET-DATA
+            }
+        }
+    }
+    services {
+        ssh {
+            root-login deny;
+            tcp-forwarding;
+            protocol-version v2;
+            max-pre-authentication-packets 20;
+        }
+        dhcp {
+            traceoptions {
+                file dhcp_logfile;
+                level all;
+                flag all;
+            }
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        host 10.24.128.5 {
+            any any;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+    ntp {
+        server 216.239.35.0;
+        server 216.239.35.4;
+        server 216.239.35.8;
+        server 216.239.35.12;
+    }
+}
+chassis {
+    alarm {
+        management-ethernet {
+            link-down ignore;
+        }
+    }
+    auto-image-upgrade;
+}
+interfaces {
+    interface-range access-mgmtsrv {
+        member-range ge-0/0/12 to ge-0/0/15;
+        unit 0 {
+            family ethernet-switching {
+                port-mode trunk;
+                vlan {
+                    members srv;
+                }
+                native-vlan-id 1;
+            }
+        }
+    }
+    interface-range down-sw {
+        member-range ge-0/0/0 to ge-0/0/3;
+        unit 0 {
+            family ethernet-switching {
+                port-mode trunk;
+                vlan {
+                    members [ adm srv user wifi ];
+                }
+                native-vlan-id 1;
+            }
+        }
+    }
+    interface-range down-esw {
+        member ge-0/0/48;
+        unit 0 {
+            family ethernet-switching {
+                port-mode trunk;
+                vlan {
+                    members [ wifi user adm ];
+                }
+                native-vlan-id 1;
+            }
+        }
+    }
+    interface-range access-adm {
+        member-range ge-0/0/28 to ge-0/0/31;
+        unit 0 {
+            family ethernet-switching {
+                port-mode trunk;
+                vlan {
+                    members [ user mgmt ];
+                }
+                native-vlan-id 100;
+            }
+        }
+    }
+    interface-range access-mgmt {
+        member-range ge-0/0/24 to ge-0/0/27;
+        unit 0 {
+            family ethernet-switching {
+                port-mode access;
+                vlan {
+                    members mgmt;
+                }
+            }
+        }
+    }
+    interface-range access-user {
+        member-range ge-0/0/32 to ge-0/0/35;
+        unit 0 {
+            family ethernet-switching {
+                port-mode access;
+                vlan {
+                    members user;
+                }
+            }
+        }
+    }
+    ge-0/0/0 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/2 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/3 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/4 {
+        unit 0 {
+            family ethernet-switching {
+                port-mode trunk;
+            }
+        }
+    }
+    ge-0/0/5 {
+        disable;
+    }
+    ge-0/0/6 {
+        disable;
+    }
+    ge-0/0/7 {
+        disable;
+    }
+    ge-0/0/8 {
+        disable;
+    }
+    ge-0/0/9 {
+        disable;
+    }
+    ge-0/0/10 {
+        disable;
+    }
+    ge-0/0/11 {
+        disable;
+    }
+    ge-0/0/12 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/13 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/14 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/15 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/16 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/17 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/18 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/19 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/20 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/21 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/22 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/23 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/24 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/25 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/26 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/27 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/28 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/29 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/30 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/31 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/32 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/33 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/34 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/35 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/36 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/37 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/38 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/39 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/40 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/41 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/42 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/43 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/44 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/45 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/46 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/0/47 {
+        unit 0 {
+            family ethernet-switching {
+                port-mode trunk;
+                vlan {
+                    members [ adm mgmt srv wifi user ];
+                }
+                native-vlan-id 1;
+            }
+        }
+    }
+    ge-0/1/0 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/1/1 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/1/2 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    ge-0/1/3 {
+        unit 0 {
+            family ethernet-switching;
+        }
+    }
+    me0 {
+        unit 0 {
+            family inet {
+                dhcp {
+                    vendor-id Juniper-ex2200-48t-4g;
+                }
+            }
+        }
+    }
+    vlan {
+        unit 0 {
+            family inet {
+                dhcp {
+                    vendor-id Juniper-ex2200-48t-4g;
+                }
+            }
+        }
+        unit 1 {
+            family inet {
+                address 10.24.0.2/24;
+            }
+            family inet6;
+        }
+    }
+}
+snmp {
+    interface vlan.1;
+    community rnuDtt9nfy7g {
+        authorization read-only;
+    }
+}
+routing-options {
+    static {
+        route 0.0.0.0/0 next-hop 10.24.0.1;
+    }
+}
+protocols {
+    igmp-snooping {
+        vlan all {
+            disable;
+        }
+    }
+    rstp;
+    lldp {
+        advertisement-interval 20;
+        hold-multiplier 5;
+        interface all;
+    }
+    lldp-med {
+        interface all;
+    }
+}
+ethernet-switching-options {
+    storm-control {
+        interface all;
+    }
+}
+vlans {
+    adm {
+        vlan-id 100;
+    }
+    default {
+        l3-interface vlan.0;
+    }
+    mgmt {
+        vlan-id 1;
+        l3-interface vlan.1;
+    }
+    srv {
+        vlan-id 10;
+    }
+    user {
+        vlan-id 112;
+    }
+    wifi {
+        vlan-id 11;
+    }
+}
+

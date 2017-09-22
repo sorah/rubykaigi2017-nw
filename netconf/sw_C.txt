@@ -1,0 +1,251 @@
+!
+! Last configuration change at 11:43:39 JST Tue Sep 12 2017 by rk
+! NVRAM config last updated at 14:30:41 JST Fri Sep 15 2017 by rk
+!
+version 12.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname sw-phx-01
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 100000
+enable secret 
+!
+username rk privilege 15 password 
+!
+!
+no aaa new-model
+clock timezone JST 9
+authentication mac-move permit
+ip subnet-zero
+!
+!
+ip domain-name venue.l.SERVICE-DOMAIN
+ip name-server 10.24.128.2
+vtp mode transparent
+!
+!
+spanning-tree mode pvst
+spanning-tree etherchannel guard misconfig
+spanning-tree extend system-id
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+vlan 10-11,100,112,2112
+!
+ip ssh authentication-retries 5
+ip ssh version 2
+lldp timer 20
+lldp holdtime 100
+lldp run
+!
+interface Port-channel1
+ description esw0
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+!
+interface Port-channel2
+ description esw1
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+!
+interface Port-channel3
+ description esw2
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+!
+interface FastEthernet0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/1
+ description esw0-po
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 1 mode passive
+!
+interface GigabitEthernet0/2
+ description esw0-po
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 1 mode passive
+!
+interface GigabitEthernet0/3
+ description esw1-po
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 2 mode passive
+!
+interface GigabitEthernet0/4
+ description esw1-po
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 2 mode passive
+!
+interface GigabitEthernet0/5
+ description esw2-po
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 3 mode passive
+!
+interface GigabitEthernet0/6
+ description esw2-po
+ switchport trunk allowed vlan 1,11,100,112,2112
+ switchport mode trunk
+ channel-protocol lacp
+ channel-group 3 mode passive
+!
+interface GigabitEthernet0/7
+ description down-ap
+ switchport trunk native vlan 11
+ switchport trunk allowed vlan 11,100,112,2112
+ switchport mode trunk
+!
+interface GigabitEthernet0/8
+ description down-ap
+ switchport trunk native vlan 11
+ switchport trunk allowed vlan 11,100,112,2112
+ switchport mode trunk
+ shutdown
+!
+interface GigabitEthernet0/9
+ description down-sw
+ switchport trunk allowed vlan 1,10,11,100,112,2112
+ switchport mode trunk
+!
+interface GigabitEthernet0/10
+ description down-sw
+ switchport trunk allowed vlan 1,10,11,100,112,2112
+ switchport mode trunk
+!
+interface GigabitEthernet0/11
+ description down-sw
+ switchport trunk allowed vlan 1,10,11,100,112,2112
+ switchport mode trunk
+!
+interface GigabitEthernet0/12
+ description down-sw
+ switchport trunk allowed vlan 1,10,11,100,112,2112
+ switchport mode trunk
+!
+interface GigabitEthernet0/13
+ description access-mgmt
+ switchport mode access
+!
+interface GigabitEthernet0/14
+ description access-adm
+ switchport trunk native vlan 100
+ switchport trunk allowed vlan 1,100,112
+ switchport mode trunk
+!
+interface GigabitEthernet0/15
+ description access-adm
+ switchport trunk native vlan 100
+ switchport trunk allowed vlan 1,100,112
+ switchport mode trunk
+!
+interface GigabitEthernet0/16
+ description access-user
+ switchport access vlan 112
+ switchport mode access
+ switchport protected
+!
+interface GigabitEthernet0/17
+ description access-user
+ switchport access vlan 112
+ switchport mode access
+ switchport protected
+!
+interface GigabitEthernet0/18
+ description access-user
+ switchport access vlan 112
+ switchport mode access
+ switchport protected
+!
+interface GigabitEthernet0/19
+ description access-user
+ switchport access vlan 112
+ switchport mode access
+ switchport protected
+!
+interface GigabitEthernet0/20
+ description access-user
+ switchport access vlan 112
+ switchport mode access
+ switchport protected
+!
+interface GigabitEthernet0/21
+ description access-user
+ switchport access vlan 112
+ switchport mode access
+ switchport protected
+!
+interface GigabitEthernet0/22
+ description access-user
+ switchport access vlan 112
+ switchport mode access
+ switchport protected
+!
+interface GigabitEthernet0/23
+ shutdown
+!
+interface GigabitEthernet0/24
+ switchport mode trunk
+!
+interface GigabitEthernet0/25
+ shutdown
+!
+interface GigabitEthernet0/26
+ shutdown
+!
+interface Vlan1
+ ip address 10.24.0.40 255.255.255.0
+!
+ip default-gateway 10.24.0.1
+no ip http server
+no ip http secure-server
+!
+ip access-list standard acl-snmp
+ permit 10.24.128.0 0.0.127.255
+ permit 10.24.0.0 0.0.0.255
+!
+ip access-list extended acl-ssh
+ permit ip 10.24.128.0 0.0.127.255 any
+ permit ip 10.24.0.0 0.0.0.255 any
+ deny   ip any any
+logging source-interface Vlan1
+logging 10.24.128.5
+snmp-server community rnuDtt9nfy7g RO acl-snmp
+!
+!
+line con 0
+ login local
+line vty 0 4
+ privilege level 15
+ login local
+line vty 5 15
+ access-class acl-ssh in
+ privilege level 15
+ login local
+ transport input ssh
+!
+ntp clock-period 22518448
+ntp server 216.239.35.0
+ntp server 216.239.35.4
+ntp server 216.239.35.8
+ntp server 216.239.35.12
+end
+

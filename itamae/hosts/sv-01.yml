@@ -1,0 +1,11 @@
+sv-01.venue.l.nw.rubykaigi.org:
+  properties:
+    attributes:
+      nspawn:
+        machines:
+          dns-cache-01: {}
+          debug-edge-01: {}
+
+    run_list:
+      - roles/base/default.rb
+      - roles/nspawn-host/default.rb

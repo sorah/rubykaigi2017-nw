@@ -1,0 +1,18 @@
+[Unit]
+Description=fluentd - a data collector
+Documentation=https://docs.fluentd.org
+After=network.target
+
+[Service]
+Type=simple
+User=fluentd
+Group=fluentd
+LimitNOFILE=65536
+ExecStartPre=/usr/bin/ruby /usr/bin/fluentd --dry-run -q
+ExecStart=/usr/bin/ruby /usr/bin/fluentd -c <%= node[:fluentd].fetch(:config_path) %>
+ExecReload=/bin/kill -HUP $MAINPID
+TimeoutStopSec=120
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
